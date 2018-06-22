@@ -16,3 +16,6 @@ mvn jaxb2:xjc
 
 # Request from SoapService
 http://localhost:9300/products/1
+
+# Document REST API
+http://192.168.50.100:9300/swagger-ui.html
