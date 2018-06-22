@@ -6,7 +6,7 @@ https://github.com/VitRocket/EurekaServer
 
 # Links
 http://localhost:9300/actuator/info
-http://localhost:9300/service-instances/clientservice
+http://localhost:9300/actuator/service-instances/clientservice
 
 ### generate resources
 from product.xsd
