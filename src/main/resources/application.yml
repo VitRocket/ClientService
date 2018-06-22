@@ -1,0 +1,12 @@
+server:
+  port: 9300
+
+spring:
+  application:
+    name: clientservice
+
+eureka:
+  client:
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://system:system@localhost:9000/eureka/
