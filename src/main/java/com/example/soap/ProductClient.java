@@ -1,9 +1,15 @@
 package com.example.soap;
 
+import com.example.soap.product.GetAllProductsRequest;
+import com.example.soap.product.GetAllProductsResponse;
 import com.example.soap.product.GetProductByIdRequest;
 import com.example.soap.product.GetProductByIdResponse;
 import com.example.soap.product.ObjectFactory;
 import com.example.soap.product.ProductModel;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -11,12 +17,16 @@ import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class ProductClient {
 
     private final static String CONTEXT_PATH = "com.example.soap.product";
 
+    private final DiscoveryClient discoveryClient;
     private WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
 
     @PostConstruct
@@ -34,17 +44,36 @@ public class ProductClient {
         webServiceTemplate.setInterceptors(new ClientInterceptor[]{wss4jSecurityInterceptor});
     }
 
+    private String getUri() {
+        List<ServiceInstance> instances = discoveryClient.getInstances("soapservice");
+        ServiceInstance instance = instances.stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("not found service"));
+        String defaultUri = instance.getUri().toString() + "/ws";
+        log.info("Request from: " + defaultUri);
+        return defaultUri;
+    }
 
-    public ProductModel getProductById(Integer id, String defaultUri) {
+    public ProductModel getProductById(Integer id) {
+        webServiceTemplate.setDefaultUri(getUri());
+
         ObjectFactory factory = new ObjectFactory();
 
         GetProductByIdRequest request = factory.createGetProductByIdRequest();
         request.setId(id);
-
-        webServiceTemplate.setDefaultUri(defaultUri);
         GetProductByIdResponse response = (GetProductByIdResponse) webServiceTemplate.marshalSendAndReceive(request);
 
         return response.getProduct();
+    }
+
+    public List<ProductModel> getAllProducts() {
+        webServiceTemplate.setDefaultUri(getUri());
+
+        ObjectFactory factory = new ObjectFactory();
+        GetAllProductsRequest request = factory.createGetAllProductsRequest();
+        GetAllProductsResponse response = (GetAllProductsResponse) webServiceTemplate.marshalSendAndReceive(request);
+
+        return response.getProducts();
     }
 
 }

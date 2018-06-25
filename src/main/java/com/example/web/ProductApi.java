@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductApi {
 
-    private final DiscoveryClient discoveryClient;
     private final ProductClient productClient;
 
     @ApiOperation(
@@ -30,18 +29,7 @@ public class ProductApi {
     public ProductModel getProduct(
             @PathVariable Integer productId) {
 
-        List<ServiceInstance> instances = discoveryClient.getInstances("soapservice");
-
-        ServiceInstance instance
-                = instances.stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("not found"));
-
-        String defaultUri = instance.getUri().toString() + "/ws";
-        System.out.println("Request from: " + defaultUri);
-
-
-        ProductModel productModel = productClient.getProductById(productId, defaultUri);
+        ProductModel productModel = productClient.getProductById(productId);
         log.info(productModel.toString());
         return productModel;
     }

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" class="full-height" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/head :: head"></head>
+<body>
+<nav th:include="fragments/navbar :: nav" class="navbar navbar-expand-sm bg-dark navbar-dark"></nav>
+
+<div class="container-fluid">
+    <h3>Demo REST client.</h3>
+    <p th:text="'Hello, ' + ${name} + '!'"/>
+</div>
+
+</body>
+</html>
