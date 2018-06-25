@@ -7,6 +7,8 @@ import com.example.soap.product.ProductModel;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
+import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
 import javax.annotation.PostConstruct;
 
@@ -24,6 +26,12 @@ public class ProductClient {
 
         webServiceTemplate.setMarshaller(marshaller);
         webServiceTemplate.setUnmarshaller(marshaller);
+
+        Wss4jSecurityInterceptor wss4jSecurityInterceptor = new Wss4jSecurityInterceptor();
+        wss4jSecurityInterceptor.setSecurementActions("Timestamp UsernameToken");
+        wss4jSecurityInterceptor.setSecurementUsername("admin");
+        wss4jSecurityInterceptor.setSecurementPassword("secret");
+        webServiceTemplate.setInterceptors(new ClientInterceptor[]{wss4jSecurityInterceptor});
     }
 
 
