@@ -1,9 +1,9 @@
 package com.example.soap;
 
+import com.example.soap.product.GetProductByIdRequest;
+import com.example.soap.product.GetProductByIdResponse;
 import com.example.soap.product.ObjectFactory;
 import com.example.soap.product.ProductModel;
-import com.example.soap.product.ProductRequest;
-import com.example.soap.product.ProductResponse;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -30,11 +30,11 @@ public class ProductClient {
     public ProductModel getProductById(Integer id, String defaultUri) {
         ObjectFactory factory = new ObjectFactory();
 
-        ProductRequest request = factory.createProductRequest();
+        GetProductByIdRequest request = factory.createGetProductByIdRequest();
         request.setId(id);
 
         webServiceTemplate.setDefaultUri(defaultUri);
-        ProductResponse response = (ProductResponse) webServiceTemplate.marshalSendAndReceive(request);
+        GetProductByIdResponse response = (GetProductByIdResponse) webServiceTemplate.marshalSendAndReceive(request);
 
         return response.getProduct();
     }
