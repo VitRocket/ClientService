@@ -8,6 +8,9 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,20 +20,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SoapController {
 
-    private final DiscoveryClient discoveryClient;
     private final ProductClient productClient;
 
     @GetMapping({"/soap"})
     public String index(Model model) {
-        try{
+        try {
             List<ProductModel> products = productClient.getAllProducts();
             log.info(products.toString());
             model.addAttribute("productsDto", products);
             return "soap";
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             model.addAttribute("productsDto", Collections.emptyList());
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "soap";
         }
+    }
+
+    @GetMapping("/product/{id}")
+    public String getProduct(@PathVariable("id") Integer id, Model model) {
+        log.info(String.valueOf(id));
+        ProductModel productModel = productClient.getProductById(id);
+        model.addAttribute("product", productModel);
+        return "product";
     }
 }
