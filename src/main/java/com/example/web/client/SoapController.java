@@ -23,24 +23,8 @@ public class SoapController {
     private final ProductClient productClient;
 
     @GetMapping({"/soap"})
-    public String index(Model model) {
-        try {
-            List<ProductModel> products = productClient.getAllProducts();
-            log.info(products.toString());
-            model.addAttribute("productsDto", products);
+    public String index() {
             return "soap";
-        } catch (RuntimeException e) {
-            model.addAttribute("productsDto", Collections.emptyList());
-            model.addAttribute("errorMessage", "Error: " + e.getMessage());
-            return "soap";
-        }
     }
 
-    @GetMapping("/product/{id}")
-    public String getProduct(@PathVariable("id") Integer id, Model model) {
-        log.info(String.valueOf(id));
-        ProductModel productModel = productClient.getProductById(id);
-        model.addAttribute("product", productModel);
-        return "product";
-    }
 }

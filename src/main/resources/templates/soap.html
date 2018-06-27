@@ -10,30 +10,7 @@
         <h3>Demo SOAP client.</h3>
     </div>
 
-    <div class="row">
-        <h4>Products</h4>
-    </div>
-    <div class="container">
-        <div class="alert alert-danger alert-dismissible" th:if="${errorMessage!=null}">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Danger!</strong> <span th:utext="${errorMessage}"></span>
-        </div>
-    </div>
-    <div class="row">
-        <table class="table table-striped">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-            <tr th:each="product : ${productsDto}">
-                <td th:utext="${product.id}">..</td>
-                <td th:utext="${product.name}">..</td>
-                <td><a href="#" th:text="Details" th:href="@{/product/{id}(id=${product.id})}">Work Begins on
-                    HTML5.1</a></td>
-            </tr>
-        </table>
-    </div>
+    <a th:href="@{/product}">All Product</a>
 
 </div>
 </body>

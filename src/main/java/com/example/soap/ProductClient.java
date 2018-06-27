@@ -1,11 +1,6 @@
 package com.example.soap;
 
-import com.example.soap.product.GetAllProductsRequest;
-import com.example.soap.product.GetAllProductsResponse;
-import com.example.soap.product.GetProductByIdRequest;
-import com.example.soap.product.GetProductByIdResponse;
-import com.example.soap.product.ObjectFactory;
-import com.example.soap.product.ProductModel;
+import com.example.soap.product.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
@@ -76,4 +71,38 @@ public class ProductClient {
         return response.getProducts();
     }
 
+    public ProductModel addProduct(ProductModel productModel) throws Exception {
+        webServiceTemplate.setDefaultUri(getUri());
+
+        ObjectFactory factory = new ObjectFactory();
+        AddProductRequest request = factory.createAddProductRequest();
+        request.setName(productModel.getName());
+        request.setDescription(productModel.getDescription());
+        AddProductResponse response = (AddProductResponse) webServiceTemplate.marshalSendAndReceive(request);
+
+        ServiceStatus status = response.getServiceStatus();
+        if ("SUCCESS".equals(status.getStatusCode())) {
+            return response.getProduct();
+        } else if ("FAIL".equals(status.getStatusCode())) {
+            throw new Exception(status.getMessage());
+        }
+        throw new Exception("Sorry. Unknown exception.");
+    }
+
+    public ProductModel updateProduct(ProductModel productModel) throws Exception {
+        webServiceTemplate.setDefaultUri(getUri());
+
+        ObjectFactory factory = new ObjectFactory();
+        UpdateProductRequest request = factory.createUpdateProductRequest();
+        request.setProduct(productModel);
+        UpdateProductResponse response = (UpdateProductResponse) webServiceTemplate.marshalSendAndReceive(request);
+
+        ServiceStatus status = response.getServiceStatus();
+        if ("SUCCESS".equals(status.getStatusCode())) {
+            return productModel;
+        } else if ("FAIL".equals(status.getStatusCode())) {
+            throw new Exception(status.getMessage());
+        }
+        throw new Exception("Sorry. Unknown exception.");
+    }
 }
